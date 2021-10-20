@@ -15,6 +15,7 @@ class Sudoku:
                 row += str(element)
 
             self._grid.append(row)
+ 
 
     def place(self, value: int, x: int, y: int) -> None:
         """Place value at x,y."""
@@ -127,20 +128,11 @@ class Sudoku:
         Returns True if and only if all rows, columns and blocks contain
         only the numbers 1 through 9. False otherwise.
         """
-        values = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-
+    
         result = True
 
-        for i in range(9):
-            for value in values:
-                if value not in self.column_values(i):
-                    result = False
-
-                if value not in self.row_values(i):
-                    result = False
-
-                if value not in self.block_values(i):
-                    result = False
+        if any('0' in row for row in self._grid):
+            result = False
 
         return result
 
