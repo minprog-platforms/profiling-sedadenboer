@@ -1,5 +1,7 @@
 from __future__ import annotations
 from typing import Iterable, Sequence
+from functools import lru_cache
+import numpy as np
 
 
 class Sudoku:
@@ -36,6 +38,7 @@ class Sudoku:
         new_row = row[:x] + "0" + row[x + 1:]
         self._grid[y] = new_row
 
+    @lru_cache(maxsize=128)
     def value_at(self, x: int, y: int) -> int:
         """Returns the value at x,y."""
         value = -1
@@ -79,10 +82,10 @@ class Sudoku:
         """
         next_x, next_y = -1, -1
 
-        for y in range(9):
-            for x in range(9):
-                if self.value_at(x, y) == 0 and next_x == -1 and next_y == -1:
-                    next_x, next_y = x, y
+        for row in self._grid:
+            for number in row:
+                if number == '0' and next_x == -1 and next_y == -1:
+                    next_x, next_y = row.index('0'), self._grid.index(row)
 
         return next_x, next_y
 
