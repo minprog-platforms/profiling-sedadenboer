@@ -9,6 +9,7 @@ class Sudoku:
 
     def __init__(self, puzzle: Iterable[Iterable]):
         self._grid: list[str] = []
+        self._array_grid: list[[int]] = []
 
         for puzzle_row in puzzle:
             row = ""
@@ -17,7 +18,7 @@ class Sudoku:
                 row += str(element)
 
             self._grid.append(row)
- 
+
 
     def place(self, value: int, x: int, y: int) -> None:
         """Place value at x,y."""
@@ -38,7 +39,7 @@ class Sudoku:
         new_row = row[:x] + "0" + row[x + 1:]
         self._grid[y] = new_row
 
-    @lru_cache(maxsize=128)
+    # @lru_cache(maxsize=128)
     def value_at(self, x: int, y: int) -> int:
         """Returns the value at x,y."""
         value = -1
@@ -91,19 +92,13 @@ class Sudoku:
 
     def row_values(self, i: int) -> Sequence[int]:
         """Returns all values at i-th row."""
-        values = []
-
-        for j in range(9):
-            values.append(self.value_at(j, i))
+        values = list(map(int, self._grid[i]))
 
         return values
 
     def column_values(self, i: int) -> Sequence[int]:
         """Returns all values at i-th column."""
-        values = []
-
-        for j in range(9):
-            values.append(self.value_at(i, j))
+        values = [int(item[i]) for item in self._grid]
 
         return values
 
@@ -115,14 +110,14 @@ class Sudoku:
         3 4 5
         6 7 8
         """
-        values = []
+        sudoku = []
 
-        x_start = (i % 3) * 3
-        y_start = (i // 3) * 3
+        for row in self._grid:
+            array_row = list(map(int, row))
+            sudoku.append(array_row)
 
-        for x in range(x_start, x_start + 3):
-            for y in range(y_start, y_start + 3):
-                values.append(self.value_at(x, y))
+        blocks = [[sudoku[int(m / 3) * 3 + i][(m % 3) * 3 + j] for i in range(3) for j in range(3)] for m in range(9)]
+        values = blocks[i]
 
         return values
 
