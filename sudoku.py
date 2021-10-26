@@ -4,8 +4,8 @@
 # Name: Seda den Boer
 # Student number: 12179981
 #
-# Contains Sudoku class to solve sudoku's
-# Has to be paired with solve.py and puzzle files
+# Contains Sudoku class to solve sudoku's.
+# Has to be paired with solve.py and puzzle files.
 # Methods and attributes:
 # - grid
 # - place, unplace
@@ -23,21 +23,27 @@ class Sudoku:
     """A mutable sudoku puzzle."""
 
     def __init__(self, puzzle: Iterable[Iterable]):
+        # list in which sudoku rows will be appended
         self._grid: list[str] = []
 
+        # loop through puzzle file to retrieve rows
         for puzzle_row in puzzle:
             row = ""
 
+            # get sudoku values and make row strings
             for element in puzzle_row:
                 row += str(element)
 
+            # add rows to the sudoku grid
             self._grid.append(row)
 
     def place(self, value: int, x: int, y: int) -> None:
         """Place value at x,y."""
+        # get y'th
         row = self._grid[y]
         new_row = ""
 
+        # insert value into row at place x
         for i in range(9):
             if i == x:
                 new_row += str(value)
@@ -48,15 +54,14 @@ class Sudoku:
 
     def unplace(self, x: int, y: int) -> None:
         """Remove (unplace) a number at x,y."""
+        # remove a number and replace with '0'
         row = self._grid[y]
         new_row = row[:x] + "0" + row[x + 1:]
         self._grid[y] = new_row
 
     def value_at(self, x: int, y: int) -> int:
         """Returns the value at x,y."""
-        value = -1
-
-        # value = self.row_values(y)[x]
+        # get value at x,y with sudoku grid
         value = int(self._grid[y][x])
 
         return value
@@ -90,8 +95,10 @@ class Sudoku:
         Returns the next index (x,y) that is empty (value 0).
         If there is no empty spot, returns (-1,-1)
         """
+        # intialize next index values
         next_x, next_y = -1, -1
 
+        # search for empty spot '0' by looping over rows
         for row in self._grid:
             if '0' in row and next_x == -1 and next_y == -1:
                 next_x, next_y = row.index('0'), self._grid.index(row)
@@ -120,9 +127,11 @@ class Sudoku:
         """
         values = []
 
+        # get starting coördinates for a block
         x_start = (i % 3) * 3
         y_start = (i // 3) * 3
 
+        # get block values
         for x in range(x_start, x_start + 3):
             for y in range(y_start, y_start + 3):
                 values.append(self.value_at(x, y))
@@ -136,6 +145,7 @@ class Sudoku:
         """
         result = True
 
+        # sudoku is solved if there are no empty spots left
         if any('0' in row for row in self._grid):
             result = False
 
@@ -143,7 +153,8 @@ class Sudoku:
 
     def __str__(self) -> str:
         representation = ""
-
+        
+        # print sudoku in a neat way
         for row in self._grid:
             representation += row + "\n"
 
