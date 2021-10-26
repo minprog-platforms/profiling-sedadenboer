@@ -1,7 +1,22 @@
+# sudoku.py
+#
+# Course: programmeerplatform
+# Name: Seda den Boer
+# Student number: 12179981
+#
+# Contains Sudoku class to solve sudoku's
+# Has to be paired with solve.py and puzzle files
+# Methods and attributes:
+# - grid
+# - place, unplace
+# - value_at, options_at, next_empty_index
+# - row_values, column_values, block_values
+# - is_solved
+# - function to print the sudoku
+
 from __future__ import annotations
 from typing import Iterable, Sequence
 from functools import lru_cache
-import numpy as np
 
 
 class Sudoku:
@@ -9,7 +24,6 @@ class Sudoku:
 
     def __init__(self, puzzle: Iterable[Iterable]):
         self._grid: list[str] = []
-        self._array_grid: list[[int]] = []
 
         for puzzle_row in puzzle:
             row = ""
@@ -18,7 +32,6 @@ class Sudoku:
                 row += str(element)
 
             self._grid.append(row)
-
 
     def place(self, value: int, x: int, y: int) -> None:
         """Place value at x,y."""
@@ -39,16 +52,12 @@ class Sudoku:
         new_row = row[:x] + "0" + row[x + 1:]
         self._grid[y] = new_row
 
-    # @lru_cache(maxsize=128)
     def value_at(self, x: int, y: int) -> int:
         """Returns the value at x,y."""
         value = -1
 
-        for i in range(9):
-            for j in range(9):
-                if i == x and j == y:
-                    row = self._grid[y]
-                    value = int(row[x])
+        # value = self.row_values(y)[x]
+        value = int(self._grid[y][x])
 
         return value
 
@@ -56,24 +65,24 @@ class Sudoku:
         """Returns all possible values (options) at x,y."""
         options = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
-        # Remove all values from the row
+        # remove all values from the row
         for value in self.row_values(y):
             if value in options:
                 options.remove(value)
 
-        # Remove all values from the column
+        # remove all values from the column
         for value in self.column_values(x):
             if value in options:
                 options.remove(value)
 
-        # Get the index of the block based from x,y
+        # get the index of the block based from x,y
         block_index = (y // 3) * 3 + x // 3
 
-        # Remove all values from the block
+        # remove all values from the block
         for value in self.block_values(block_index):
             if value in options:
                 options.remove(value)
-
+        
         return options
 
     def next_empty_index(self) -> tuple[int, int]:
@@ -84,9 +93,8 @@ class Sudoku:
         next_x, next_y = -1, -1
 
         for row in self._grid:
-            for number in row:
-                if number == '0' and next_x == -1 and next_y == -1:
-                    next_x, next_y = row.index('0'), self._grid.index(row)
+            if '0' in row and next_x == -1 and next_y == -1:
+                next_x, next_y = row.index('0'), self._grid.index(row)
 
         return next_x, next_y
 
@@ -101,7 +109,7 @@ class Sudoku:
         values = [int(item[i]) for item in self._grid]
 
         return values
-
+    
     def block_values(self, i: int) -> Sequence[int]:
         """
         Returns all values at i-th block.
@@ -110,14 +118,14 @@ class Sudoku:
         3 4 5
         6 7 8
         """
-        sudoku = []
+        values = []
 
-        for row in self._grid:
-            array_row = list(map(int, row))
-            sudoku.append(array_row)
+        x_start = (i % 3) * 3
+        y_start = (i // 3) * 3
 
-        blocks = [[sudoku[int(m / 3) * 3 + i][(m % 3) * 3 + j] for i in range(3) for j in range(3)] for m in range(9)]
-        values = blocks[i]
+        for x in range(x_start, x_start + 3):
+            for y in range(y_start, y_start + 3):
+                values.append(self.value_at(x, y))
 
         return values
 
@@ -126,7 +134,6 @@ class Sudoku:
         Returns True if and only if all rows, columns and blocks contain
         only the numbers 1 through 9. False otherwise.
         """
-    
         result = True
 
         if any('0' in row for row in self._grid):
@@ -142,7 +149,7 @@ class Sudoku:
 
         return representation.strip()
 
-
+@lru_cache(maxsize=128)
 def load_from_file(filename: str) -> Sudoku:
     """Load a Sudoku from filename."""
     puzzle: list[str] = []
