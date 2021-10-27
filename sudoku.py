@@ -16,7 +16,6 @@
 
 from __future__ import annotations
 from typing import Iterable, Sequence
-from functools import lru_cache
 
 
 class Sudoku:
@@ -28,18 +27,13 @@ class Sudoku:
 
         # loop through puzzle file to retrieve rows
         for puzzle_row in puzzle:
-            row = ""
-
-            # get sudoku values and make row strings
-            for element in puzzle_row:
-                row += str(element)
 
             # add rows to the sudoku grid
-            self._grid.append(row)
+            self._grid.append(str(puzzle_row))
 
     def place(self, value: int, x: int, y: int) -> None:
         """Place value at x,y."""
-        # get y'th
+        # get y'th row
         row = self._grid[y]
         new_row = ""
 
@@ -87,7 +81,7 @@ class Sudoku:
         for value in self.block_values(block_index):
             if value in options:
                 options.remove(value)
-        
+
         return options
 
     def next_empty_index(self) -> tuple[int, int]:
@@ -116,7 +110,7 @@ class Sudoku:
         values = [int(item[i]) for item in self._grid]
 
         return values
-    
+
     def block_values(self, i: int) -> Sequence[int]:
         """
         Returns all values at i-th block.
@@ -153,14 +147,14 @@ class Sudoku:
 
     def __str__(self) -> str:
         representation = ""
-        
+
         # print sudoku in a neat way
         for row in self._grid:
             representation += row + "\n"
 
         return representation.strip()
 
-@lru_cache(maxsize=128)
+
 def load_from_file(filename: str) -> Sudoku:
     """Load a Sudoku from filename."""
     puzzle: list[str] = []
