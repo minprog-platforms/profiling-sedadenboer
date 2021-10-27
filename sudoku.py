@@ -5,6 +5,7 @@
 # Student number: 12179981
 #
 # Contains Sudoku class to solve sudoku's.
+# Optimized version of the original.
 # Has to be paired with solve.py and puzzle files.
 # Methods and attributes:
 # - grid
